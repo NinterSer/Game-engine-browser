@@ -1,0 +1,191 @@
+<HTML>
+	<head>
+		<!--<link rel="stylesheet" type="text/css" href="/CSS/style.css"> -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	</head>
+	<body id='body' style="margin: 0px;">
+		<script src="./lib/math.js"></script>
+		<script src="./lib/physc.js"></script>
+		<script src="./lib/test.js"></script>
+		<script src="./NinterEngine 1.0.1.js"></script>
+		<script>
+
+			const resources = {
+				images: ['sprite-animation-coins-sprite.png','./resources/images/test/IDLE.png','./resources/images/test/WarriorSheet.png','./resources/images/test/chair.png', './resources/images/test/background-hill.jpg']
+			}
+			preloadAll(resources).then(()=>{
+
+				let testObject = new Static({id:'testObject'});
+				testObject.p = new Impulse(0,0.3);
+				let imageTestObject = new Sprite({src: './resources/images/test/WarriorSheet.png', parent:testObject, width:69, height:44, scale:3, typeImageRendering:typeImageRendering.pixelated, position:Vector2D(0,0)});
+				window.imageTestObject = imageTestObject;
+				window.testObject = testObject;
+				imageTestObject.vertically = -1;
+				testObject.stats = 'wait';
+
+				//let areaTestObject = new Area2D(); window.areaTestObject = areaTestObject;
+				//areaTestObject.parent = testObject;
+				//areaTestObject.area = [{x:-20, y:0},{x:0, y:-20},{x:20, y:0},{x:0, y:20}];
+				//areaTestObject.showObject(true);
+				//areaTestObject.ascent = false
+
+				area1 = new Area2D(); window.area1 = area1;
+				//area1.enter = (area, point)=>{console.log(area.id, point);}
+				area1.area = [
+				  {x:-10,y:-30},
+				  {x:10,y:-30},
+				  {x:50,y:-10},
+				  {x:50,y:10},
+				  {x:10,y:30},
+				  {x:-10,y:30},
+				  {x:-30,y:10},
+				  {x:-30,y:-10},
+				];
+				area1.showObject(true);
+				area1.parent = testObject;
+
+				let area2 = new Area2D(); window.area2 = area2; area2.typeArea = typeArea.static;
+				area2.area = [
+				  { x: 10, y: 0 },     // Левый верхний
+				  { x: 40, y: 0 },    // Правый верхний
+				  { x: 50, y: 50 },   // Правый нижний
+				  { x: 0, y: 50 }     // Левый нижний
+				];
+				area2.showObject(true);
+
+				let areas = []
+				for(let i=0; i<0; i++){
+					let area = new Area2D(); area.typeArea = typeArea.static;
+					area.area = [
+					  {x:-10,y:-30},
+					  {x:10,y:-30},
+					  {x:30,y:-10},
+					  {x:30,y:10},
+					  {x:10,y:30},
+					  {x:-10,y:30},
+					  {x:-30,y:10},
+					  {x:-30,y:-10},
+					];
+					area.showObject(true);
+					area.globalPosition = {x: i*100, y:200}
+					areas.push(area);
+				}
+
+				areas.forEach((e)=>{
+					e.area = [
+					  { x: 10, y: 0 },     // Левый верхний
+					  { x: 40, y: 0 },    // Правый верхний
+					  { x: 50, y: 50 },   // Правый нижний
+					  { x: 0, y: 50 }     // Левый нижний
+					];
+				})
+
+				area2.position.x = 121;
+				area1.position.x = 20; area1.position.y = 10;
+				testObject.globalPosition.x = 60; testObject.globalPosition.y = 60;
+
+				/*window.object1 = new Static({id:"A1"}); object1.position = Vector2D(20,10); object1.showObject(true);
+				window.object2 = new Static({id:"A2"}); object2.position = Vector2D(40,20); object2.showObject(true);
+				window.object3 = new Static({id:"A3"}); object3.position = Vector2D(60,30); object3.showObject(true);
+				object2.parent = object1;
+				object3.parent = object2;*/
+				
+				//imageTestObject.width = 69; 
+				//imageTestObject.height = 44;
+				imageTestObject.autoFrames();
+
+				imageTestObject.addAnimation('wait', imageTestObject.frames.get(0));
+				imageTestObject.addAnimation('run', [...imageTestObject.frames.get(1), imageTestObject.frames.get(2,0),imageTestObject.frames.get(2,1)]);
+				imageTestObject.addAnimation('attack', [imageTestObject.frames.get(2,2),imageTestObject.frames.get(2,3),imageTestObject.frames.get(2,4),imageTestObject.frames.get(2,5),...imageTestObject.frames.get(3), imageTestObject.frames.get(4,0),imageTestObject.frames.get(4,1)]);
+				imageTestObject.addAnimation('death', [imageTestObject.frames.get(4,2),imageTestObject.frames.get(4,3),imageTestObject.frames.get(4,4),imageTestObject.frames.get(4,5),...imageTestObject.frames.get(5), imageTestObject.frames.get(6,0)]);
+				imageTestObject.addAnimation('damage', [imageTestObject.frames.get(6,1),imageTestObject.frames.get(6,2),imageTestObject.frames.get(6,3),imageTestObject.frames.get(6,4)]);
+				imageTestObject.addAnimation('jump', [imageTestObject.frames.get(6,5),...imageTestObject.frames.get(7),imageTestObject.frames.get(8,0)]);
+				imageTestObject.addAnimation('ride', [imageTestObject.frames.get(10,3),imageTestObject.frames.get(10,4),imageTestObject.frames.get(10,5),imageTestObject.frames.get(11,0),imageTestObject.frames.get(11,1),imageTestObject.frames.get(11,2)]);
+				imageTestObject.addAnimation('jerk', [imageTestObject.frames.get(12,0),imageTestObject.frames.get(12,1),imageTestObject.frames.get(12,2),imageTestObject.frames.get(12,3),imageTestObject.frames.get(12,4)]);
+				imageTestObject.addAnimation('hit', [imageTestObject.frames.get(12,5),...imageTestObject.frames.get(13)]);
+
+				imageTestObject.animations.jerk.repeat = false;
+				imageTestObject.animations.hit.repeat = false;
+				imageTestObject.animations.attack.repeat = false;
+				imageTestObject.repeat.rotate = typeRepeat.rotatePosition;
+				testObject.mode = 0;
+
+				let chair = new Static({id:"chair"});
+				let imageChair = new Sprite({src: './resources/images/test/chair.png',parent:chair, width:44, height:44, scale:1.5, typeImageRendering:typeImageRendering.pixelated, position:Vector2D(50,44)});
+				imageChair.autoFrames();
+				imageChair.addAnimation('wait', [imageChair.frames.get(0)]);
+				imageChair.addAnimation('hover', [imageChair.frames.get(0,1),imageChair.frames.get(0,0)]);
+				imageChair.render(imageChair.frames[0]);	
+
+				let t = 0;
+				CAMERA.target = testObject;
+				CAMERA.slow = 0.1;
+				let speed = 2;
+				testObject.script.repeat = (self)=>{
+					//object1.rotate+=1;
+					CAMERA.coordinates = COORDINATES;
+
+					if (KEYS.Space && testObject.stats!="attack"){
+						testObject.mode=testObject.mode*-1+1;
+						imageTestObject.animations[['hit','attack'][testObject.mode]].stop = false;
+						imageTestObject.animations[['hit','attack'][testObject.mode]].frame = 0;
+						testObject.stats="attack"
+						imageTestObject.animations[['hit','attack'][testObject.mode]].play(0.3);
+					} else if (testObject.stats=="attack"){
+						testObject.p.Fthrust = 0;
+						imageTestObject.animations[['hit','attack'][testObject.mode]].play(0.3, ()=>{testObject.stats="wait"});
+					} else if(KEYS.KeyA && !['jerk','attack'].includes(testObject.stats)){
+						imageTestObject.animations.run.play(0.2);
+						imageTestObject.vertically = -1;
+						testObject.move.x = -speed;
+
+						testObject.p.again = true; testObject.p.Fthrust = speed;
+						imageTestObject.animations.jerk.stop = false;
+						//imageTestObject.animations.jerk.frame = 0;
+						testObject.stats='run';
+						CAMERA.zoom = 1.6;
+					} else if(KEYS.KeyW && !['jerk','attack'].includes(testObject.stats)){
+						imageTestObject.animations.run.play(0.2);
+						imageTestObject.vertically = -1;
+						testObject.move.y = -speed;
+
+						//testObject.p.again = true; testObject.p.Fthrust = 10;
+						imageTestObject.animations.jerk.stop = false;
+						//imageTestObject.animations.jerk.frame = 0;
+						testObject.stats='run';
+						CAMERA.zoom = 1.6;
+					} else if(KEYS.KeyS && !['jerk','attack'].includes(testObject.stats)){
+						imageTestObject.animations.run.play(0.2);
+						imageTestObject.vertically = -1;
+						testObject.move.y = speed;
+
+						//testObject.p.again = true; testObject.p.Fthrust = 10;
+						imageTestObject.animations.jerk.stop = false;
+						//imageTestObject.animations.jerk.frame = 0;
+						testObject.stats='run';
+						CAMERA.zoom = 1.6;
+					} else if (KEYS.KeyD && !['jerk','attack'].includes(testObject.stats)){
+						imageTestObject.animations.run.play(0.2);
+						imageTestObject.vertically = 1;
+						testObject.move.x = speed;
+
+						testObject.p.again = true; testObject.p.Fthrust = speed;
+						imageTestObject.animations.jerk.stop = false;
+						//imageTestObject.animations.jerk.frame = 0;
+						testObject.stats='run';
+						CAMERA.zoom = 1.6;
+					} else if (testObject.p.Fthrust>0){
+						imageTestObject.animations.jerk.play(0.1);
+						testObject.move.x=imageTestObject.vertically*testObject.p.do(speed);	
+						testObject.stats='jerk';
+						CAMERA.zoom = 2;
+					} else {
+						imageTestObject.animations.wait.play(0.2);
+						testObject.stats='wait';
+						CAMERA.zoom = 2;
+					}
+				}
+			});
+		</script>
+	</body>
+</HTML>
